@@ -2,6 +2,7 @@ package com.example.expensemanagementsystem.Controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -59,15 +60,25 @@ public class AdminController {
     }
   
 
-    @GetMapping("/admin/get/expenserequests")
-    public ResponseEntity<?> getExpenseRequests(){
-       return ResponseEntity.status(HttpStatus.OK).body(adminService.getExpenseRequests());
+    @GetMapping("/admin/get/expenserequests/{empId}")
+    public ResponseEntity<?> getExpenseRequests(@PathVariable Long empId){
+       return ResponseEntity.status(HttpStatus.OK).body(adminService.getExpenseRequests(empId));
     }
 
-    // @GetMapping("/admin/get/pending/expenserequests")
-    // public ResponseEntity<?> getPendingExpenseRequests(){
-    //     return ResponseEntity.status(HttpStatus.OK).body(adminService.getPendingExpenseRequests());
-    // }
+    @GetMapping("/admin/get/pending/expenserequests/{empId}")
+    public ResponseEntity<?> getPendingExpenseRequests(@PathVariable Long empId){
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getPendingExpenseRequests(empId));
+    }
+
+     @GetMapping("/admin/get/approved/expenserequests/{empId}")
+    public ResponseEntity<?> getApprovedExpenseRequests(@PathVariable Long empId){
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getApprovedExpenseRequests(empId));
+    }
+
+    @GetMapping("/admin/get/rejected/expenserequests/{empId}")
+    public ResponseEntity<?> getRejectedExpenseRequests(@PathVariable Long empId){
+        return ResponseEntity.status(HttpStatus.OK).body(adminService.getRejectedExpenseRequests(empId));
+    }
 
     @PutMapping("/admin/editStatus/approve/expenserequests/{expRequestId}")
     public ResponseEntity<?> editStatusAccept(@PathVariable Integer expRequestId){
@@ -87,6 +98,12 @@ public class AdminController {
         catch(EntityNotFoundException ex){
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
         }
+    }
+
+    @GetMapping("/public/expenserequest/cutoff/autoapprove")
+    public ResponseEntity<?> cutOffAutoApprove(){
+            return ResponseEntity.status(HttpStatus.OK).body(adminService.cutOffAutoApprove());
+
     }
 
 }

@@ -12,4 +12,5 @@ public class Request {
     private String username;
     private String password;
     private Employee employee;
+    private String error;
 }

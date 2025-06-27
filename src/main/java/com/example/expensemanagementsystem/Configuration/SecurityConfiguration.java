@@ -30,6 +30,7 @@ public class SecurityConfiguration {
     @Bean
     public SecurityFilterChain sfc(HttpSecurity http) throws Exception{
          return http.csrf(Customizer->Customizer.disable())
+            .cors(Customizer.withDefaults())
             .authorizeHttpRequests(request->request
             .requestMatchers("/employee/**").hasAnyRole("EMPLOYEE","MANAGER","ADMIN")
             .requestMatchers("/manager/**").hasRole("MANAGER")

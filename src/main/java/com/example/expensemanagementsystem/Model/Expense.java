@@ -2,6 +2,8 @@ package com.example.expensemanagementsystem.Model;
 
 import java.time.LocalDate;
 
+import org.springframework.web.multipart.MultipartFile;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import lombok.Data;
@@ -14,7 +16,6 @@ public class Expense {
     private int expenseId;
     private String type;
     private String description;
-    private String amount;
+    private Long amount;
     private LocalDate date;
-    
 }

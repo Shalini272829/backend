@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
+// import org.springframework.cglib.core.Local;
 import org.springframework.stereotype.Service;
 
 import com.example.expensemanagementsystem.Model.Employee;
@@ -50,14 +51,26 @@ public class AdminService {
         }
     }
 
-
-    public List<ExpenseReportReq> getExpenseRequests(){
-        return expreqrepo.findAll();
+  public List<ExpenseReportReq> getExpenseRequests(Long empId){
+        return expreqrepo.findAllExpensesAdmin(empId);
     }
 
-    // public Optional<ExpenseReportReq> getPendingExpenseRequests(){
-    //     return expreqrepo.findPendingRequests();
-    // }
+    public List<ExpenseReportReq> getPendingExpenseRequests(Long empId){
+         String status="pending";
+         String managerStatus="Approved";
+        return expreqrepo.findAdminPendingRequests(empId,status,managerStatus);
+    }
+
+    public List<ExpenseReportReq> getApprovedExpenseRequests(Long empId){
+        String status="Approved";
+        String autoApp="AutoApproved";
+        return expreqrepo.findAdminApprovedRequests(empId,status,autoApp);
+    }
+
+    public List<ExpenseReportReq> getRejectedExpenseRequests(Long empId){
+        String status="Rejected";
+        return expreqrepo.findAdminRejectedRequests(empId,status);
+    }
 
     public String editStatusApprove(Integer expRequestId){
         Optional<ExpenseReportReq> optionalrequest=expreqrepo.findById(expRequestId);
@@ -78,11 +91,26 @@ public class AdminService {
         if(optionalrequest.isPresent()){
             optionalrequest.get().setManager_status("Rejected");
             optionalrequest.get().setStatus("Rejected");
+            optionalrequest.get().setRejectedDate(LocalDate.now());
             expreqrepo.save(optionalrequest.get());
             return "The request is rejected by admin";
         }
         else{
             throw new EntityNotFoundException("Such request is not present");
         }
+    }
+
+    public List<ExpenseReportReq> cutOffAutoApprove(){
+        LocalDate today=LocalDate.now();
+        List<ExpenseReportReq> cutoffList=expreqrepo.cutOffList(today);
+
+        for(int i=0;i<cutoffList.size();i++){
+                cutoffList.get(i).setApprovedDate(today);
+                cutoffList.get(i).setManager_status("AutoApproved");
+                cutoffList.get(i).setAdmin_status("AutoApproved");
+                cutoffList.get(i).setStatus("AutoApproved");
+                expreqrepo.save(cutoffList.get(i));
+        }
+        return cutoffList;
     }
 }
